@@ -1,2 +1,15 @@
 Ref : 
 * https://jakobwaibel.com/2022/06/06/ptrace/
+
+What is ptrace anyway?
+The ptrace man page provides a solid definition of the system call:
+
+The ptrace() system call provides a means by which one process (the “tracer”) may observe or control the execution of another process (the “tracee”), and examine and change the tracee’s memory and registers. It is primarily used to implement breakpoint debugging and system call tracing.
+
+In other, simpler words: ptrace() allows you to interact with a process to set breakpoints for building debuggers like e.g. gdb or to trace system calls as done in strace. Both of these approaches are utilizing ptrace() to interact with a process.
+
+A process can be traced by setting up the calling process (my strace implementation) to be the parent process of the process we want to trace (e.g. an execution of ls). ptrace() then allows to interact with the child process. When a certain event occurs, the child process is stopped using SIGTRAP until the parent process allows the child to continue execution.
+
+For our purposes, we are going to use the nix crate to be able to use ptrace() in Rust. The nix crate generally provides various *nix system functions including ptrace().
+
+As mentioned above, I am going to build a simple strace implementation in this article. If you are interested in building a debugger instead, I suggest you read Michal Melewski’s blog post.
